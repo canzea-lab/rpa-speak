@@ -8,8 +8,7 @@ services:
 
 script:
   - set -e
-  - gradle assemble
-  - gradle installApp
+  - ./gradlew installApp
   - docker build -t ${PROJECT}:latest -t ${PROJECT}:$TRAVIS_COMMIT .
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   - docker push ${PROJECT}:latest
