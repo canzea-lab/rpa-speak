@@ -1,0 +1,21 @@
+dist: trusty
+sudo: required
+language: java
+jdk: openjdk8
+
+services:
+  - docker
+
+script:
+  - set -e
+  - gradlew assemble
+  - gradlew installApp
+  - docker build -t ${PROJECT}:latest -t ${PROJECT}:$TRAVIS_COMMIT .
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - docker push ${PROJECT}:latest
+  - docker push ${PROJECT}:$TRAVIS_COMMIT
+
+
+env:
+  global:
+  - PROJECT=canzea/oidc-proxy
