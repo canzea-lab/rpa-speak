@@ -31,4 +31,4 @@ dependencies {
     runtime 'org.slf4j:slf4j-simple:1.7.22'
 }
 
-mainClassName = "com.github.gregwhitaker.awspolly.example.Main"
+mainClassName = "com.canzea.rpa.speak.Main"

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.gregwhitaker.awspolly.example;
+package com.canzea.rpa.speak;
 
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.services.polly.AmazonPollyAsyncClient;
