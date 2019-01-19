@@ -26,7 +26,16 @@ repositories {
 
 dependencies {
     compile ratpack.dependency("guice")
-    compile 'com.amazonaws:aws-java-sdk-polly:1.11.283'
+    compile 'com.amazonaws:aws-java-sdk-polly:1.11.485'
+
+    // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
+
+    // https://mvnrepository.com/artifact/org.slf4j/slf4j-simple
+    compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.25'
+
+    // https://mvnrepository.com/artifact/org.projectlombok/lombok
+    compile group: 'org.projectlombok', name: 'lombok', version: '1.18.4'
 
     runtime 'org.slf4j:slf4j-simple:1.7.22'
 }

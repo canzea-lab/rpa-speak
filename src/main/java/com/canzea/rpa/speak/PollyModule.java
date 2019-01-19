@@ -17,14 +17,21 @@
 package com.canzea.rpa.speak;
 
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
-import com.amazonaws.services.polly.AmazonPollyAsyncClient;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.polly.AmazonPollyAsync;
+import com.amazonaws.services.polly.AmazonPollyAsyncClientBuilder;
 import com.google.inject.AbstractModule;
 
 public class PollyModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(AmazonPollyAsyncClient.class).toInstance(new AmazonPollyAsyncClient(new DefaultAWSCredentialsProviderChain()));
+        bind(AmazonPollyAsync.class).toInstance(
+                AmazonPollyAsyncClientBuilder
+                        .standard()
+                        .withRegion(Regions.US_WEST_2)
+                        .withCredentials(new DefaultAWSCredentialsProviderChain())
+                        .build());
         bind(PollyReadHandler.class);
         bind(PollyVoicesHandler.class);
     }

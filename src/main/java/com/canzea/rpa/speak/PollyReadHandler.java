@@ -16,21 +16,24 @@
 
 package com.canzea.rpa.speak;
 
-import com.amazonaws.services.polly.AmazonPollyAsyncClient;
+import com.amazonaws.services.polly.AmazonPollyAsync;
 import com.amazonaws.services.polly.model.SynthesizeSpeechRequest;
 import com.amazonaws.services.polly.model.SynthesizeSpeechResult;
 import com.google.inject.Inject;
 import io.netty.buffer.Unpooled;
+import lombok.extern.slf4j.Slf4j;
 import org.reactivestreams.Subscription;
 import ratpack.handling.Context;
 import ratpack.handling.Handler;
 
 import java.io.IOException;
+import java.io.InputStream;
 
+@Slf4j
 public class PollyReadHandler implements Handler {
 
     @Inject
-    private AmazonPollyAsyncClient polly;
+    private AmazonPollyAsync polly;
 
     @Override
     public void handle(Context ctx) throws Exception {
@@ -45,38 +48,42 @@ public class PollyReadHandler implements Handler {
 
         SynthesizeSpeechResult result = polly.synthesizeSpeech(ssRequest);
 
-        System.out.println("Handling request..." + result.getContentType());
+        InputStream audioStream = result.getAudioStream();
+
+        log.info("Handling request... {} - {}", text, result.getContentType());
         
         ctx.getResponse().contentType(result.getContentType());
+
         ctx.getResponse().sendStream(s -> s.onSubscribe(new Subscription() {
+            int total = 0;
             @Override
             public void request(long n) {
                 try {
-                    byte[] data      = new byte[4096];
-                    int bytesRead = result.getAudioStream().read(data);
-                    System.out.println("Chunk from aws " + bytesRead);
-                    while(bytesRead != -1) {
+                    byte[] data      = new byte[12048];
+                    int bytesRead = audioStream.read(data);
+                    total += bytesRead;
+                    if(bytesRead != -1) {
                         s.onNext(Unpooled.wrappedBuffer(data));
-                        bytesRead = result.getAudioStream().read(data);
+                    } else {
+                        s.onComplete();
+                        log.info("Request for {} DONE - bytes {}", n, total);
                     }
-                    //System.out.println("Done stream");
+
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    log.error("Error from AWS", e);
                     ctx.getResponse().status(500);
                     ctx.getResponse().send();
                 } catch (Throwable e) {
-                    e.printStackTrace();
+                    log.error("Error from AWS", e);
                     ctx.getResponse().status(500);
                     ctx.getResponse().send();
                 } finally {
-                    s.onComplete();
                 }
-                System.out.println("Done request");
             }
 
             @Override
             public void cancel() {
-                System.out.println("CANCELLED");
+                log.warn("Polly CANCELLED");
             }
         }));
     }
