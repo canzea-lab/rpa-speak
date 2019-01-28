@@ -6,11 +6,16 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="rpa-speak" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="aws-polly-example_main" target="1.8" />
+      <module name="aws-polly-example_test" target="1.8" />
+      <module name="canzea-rpa-speak_main" target="1.8" />
+      <module name="canzea-rpa-speak_test" target="1.8" />
       <module name="rpa-speak" target="1.5" />
+      <module name="rpa-speak_main" target="1.8" />
+      <module name="rpa-speak_test" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

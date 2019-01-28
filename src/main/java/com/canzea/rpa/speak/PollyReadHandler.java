@@ -19,6 +19,7 @@ package com.canzea.rpa.speak;
 import com.amazonaws.services.polly.AmazonPollyAsync;
 import com.amazonaws.services.polly.model.SynthesizeSpeechRequest;
 import com.amazonaws.services.polly.model.SynthesizeSpeechResult;
+import com.amazonaws.services.polly.model.TextType;
 import com.google.inject.Inject;
 import io.netty.buffer.Unpooled;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +29,7 @@ import ratpack.handling.Handler;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLDecoder;
 
 @Slf4j
 public class PollyReadHandler implements Handler {
@@ -44,7 +46,9 @@ public class PollyReadHandler implements Handler {
         SynthesizeSpeechRequest ssRequest = new SynthesizeSpeechRequest();
         ssRequest.setVoiceId(voiceId);
         ssRequest.setOutputFormat(outputFormat);
-        ssRequest.setText(text);
+        //ssRequest.setSampleRate("16000");
+        ssRequest.setText(URLDecoder.decode(text, "UTF-8"));
+        //ssRequest.setTextType(TextType.Ssml);
 
         SynthesizeSpeechResult result = polly.synthesizeSpeech(ssRequest);
 
@@ -63,7 +67,7 @@ public class PollyReadHandler implements Handler {
                     int bytesRead = audioStream.read(data);
                     total += bytesRead;
                     if(bytesRead != -1) {
-                        s.onNext(Unpooled.wrappedBuffer(data));
+                        s.onNext(Unpooled.wrappedBuffer(data, 0, bytesRead));
                     } else {
                         s.onComplete();
                         log.info("Request for {} DONE - bytes {}", n, total);
